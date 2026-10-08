@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 
 from database import authenticate_user
+from signup import SignupWindow
+from forgot_password import ForgotPasswordWindow
+
 from styles import (
     BG_COLOR,
     CARD_COLOR,
@@ -9,60 +12,86 @@ from styles import (
     TEXT_COLOR,
     SECONDARY_TEXT,
     ACCENT_COLOR,
+    BUTTON_COLOR
 )
 
 
 class LoginApp:
+
     def __init__(self):
+
         self.root = tk.Tk()
 
-        self.root.title("Login Page")
+        self.root.title("Login")
+
         self.root.geometry("500x600")
+
         self.root.resizable(False, False)
-        self.root.configure(bg=BG_COLOR)
+
+        self.root.configure(
+            bg=BG_COLOR
+        )
 
         self.create_ui()
 
+
     def create_ui(self):
-        # Main card
+
         card = tk.Frame(
             self.root,
             bg=CARD_COLOR,
             width=380,
             height=480
         )
+
         card.place(
             relx=0.5,
             rely=0.5,
             anchor="center"
         )
 
+
+        # -------------------------
         # Title
+        # -------------------------
+
         tk.Label(
             card,
             text="Welcome Back",
             font=("Segoe UI", 24, "bold"),
             fg=TEXT_COLOR,
             bg=CARD_COLOR
-        ).pack(pady=(45, 8))
+        ).pack(
+            pady=(45, 8)
+        )
 
-        # Subtitle
+
         tk.Label(
             card,
             text="Login to your account",
             font=("Segoe UI", 11),
             fg=SECONDARY_TEXT,
             bg=CARD_COLOR
-        ).pack(pady=(0, 35))
+        ).pack(
+            pady=(0, 35)
+        )
 
+
+        # -------------------------
         # Username
+        # -------------------------
+
         tk.Label(
             card,
             text="Username",
             font=("Segoe UI", 10, "bold"),
             fg=TEXT_COLOR,
             bg=CARD_COLOR
-        ).pack(anchor="w", padx=45)
+        ).pack(
+            anchor="w",
+            padx=45
+        )
+
 
         self.username_entry = tk.Entry(
             card,
@@ -80,14 +109,22 @@ class LoginApp:
             pady=(8, 20)
         )
 
+
+        # -------------------------
         # Password
+        # -------------------------
+
         tk.Label(
             card,
             text="Password",
             font=("Segoe UI", 10, "bold"),
             fg=TEXT_COLOR,
             bg=CARD_COLOR
-        ).pack(anchor="w", padx=45)
+        ).pack(
+            anchor="w",
+            padx=45
+        )
+
 
         password_frame = tk.Frame(
             card,
@@ -99,6 +136,7 @@ class LoginApp:
             padx=45,
             pady=(8, 10)
         )
+
 
         self.password_entry = tk.Entry(
             password_frame,
@@ -118,6 +156,7 @@ class LoginApp:
             padx=(10, 0)
         )
 
+
         self.show_button = tk.Button(
             password_frame,
             text="Show",
@@ -136,10 +175,15 @@ class LoginApp:
             padx=8
         )
 
-        # Forgot password
+
+        # -------------------------
+        # Forgot Password
+        # -------------------------
+
         tk.Button(
             card,
             text="Forgot Password?",
+            command=self.open_forgot_password,
             font=("Segoe UI", 9),
             bg=CARD_COLOR,
             fg=ACCENT_COLOR,
@@ -154,13 +198,17 @@ class LoginApp:
             pady=(0, 25)
         )
 
-        # Login button
+
+        # -------------------------
+        # Login Button
+        # -------------------------
+
         tk.Button(
             card,
             text="LOGIN",
             command=self.login,
             font=("Segoe UI", 11, "bold"),
-            bg="#2563eb",
+            bg=BUTTON_COLOR,
             fg="white",
             activebackground="#1d4ed8",
             activeforeground="white",
@@ -173,13 +221,20 @@ class LoginApp:
             ipady=12
         )
 
-        # Register
+
+        # -------------------------
+        # Sign Up
+        # -------------------------
+
         register_frame = tk.Frame(
             card,
             bg=CARD_COLOR
         )
 
-        register_frame.pack(pady=25)
+        register_frame.pack(
+            pady=25
+        )
+
 
         tk.Label(
             register_frame,
@@ -187,11 +242,15 @@ class LoginApp:
             font=("Segoe UI", 9),
             fg=SECONDARY_TEXT,
             bg=CARD_COLOR
-        ).pack(side="left")
+        ).pack(
+            side="left"
+        )
+
 
         tk.Button(
             register_frame,
             text=" Sign Up",
+            command=self.open_signup,
             font=("Segoe UI", 9, "bold"),
             bg=CARD_COLOR,
             fg=ACCENT_COLOR,
@@ -200,45 +259,110 @@ class LoginApp:
             relief="flat",
             borderwidth=0,
             cursor="hand2"
-        ).pack(side="left")
+        ).pack(
+            side="left"
+        )
 
-        # Enter key
+
+        # Press Enter to login
+
         self.root.bind(
             "<Return>",
             lambda event: self.login()
         )
 
+
         self.username_entry.focus()
 
+
+    # -------------------------
+    # Show / Hide Password
+    # -------------------------
+
     def toggle_password(self):
+
         if self.password_entry.cget("show") == "":
-            self.password_entry.config(show="*")
-            self.show_button.config(text="Show")
+
+            self.password_entry.config(
+                show="*"
+            )
+
+            self.show_button.config(
+                text="Show"
+            )
+
         else:
-            self.password_entry.config(show="")
-            self.show_button.config(text="Hide")
+
+            self.password_entry.config(
+                show=""
+            )
+
+            self.show_button.config(
+                text="Hide"
+            )
+
+
+    # -------------------------
+    # Login
+    # -------------------------
 
     def login(self):
+
         username = self.username_entry.get().strip()
+
         password = self.password_entry.get()
 
+
         if not username or not password:
+
             messagebox.showwarning(
                 "Missing Information",
                 "Please enter username and password."
             )
+
             return
 
-        if authenticate_user(username, password):
+
+        if authenticate_user(
+            username,
+            password
+        ):
+
             messagebox.showinfo(
                 "Login Successful",
                 f"Welcome, {username}!"
             )
+
         else:
+
             messagebox.showerror(
                 "Login Failed",
                 "Invalid username or password."
             )
 
+
+    # -------------------------
+    # Open Sign Up
+    # -------------------------
+
+    def open_signup(self):
+
+        SignupWindow(
+            self.root
+        )
+
+
+    # -------------------------
+    # Open Forgot Password
+    # -------------------------
+
+    def open_forgot_password(self):
+
+        ForgotPasswordWindow(
+            self.root
+        )
+
+
     def run(self):
+
         self.root.mainloop()
